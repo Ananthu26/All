@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, Button, Toast, ToastContainer, Modal, Form, Row, Col } from 'react-bootstrap';
 import PNavbar from "./PNavbar";
+import GooglePayButton from "@google-pay/button-react";
 
 
 
 function Mypolicy({ userId }) {
+  const email = localStorage.getItem("email");
     const [policies, setPolicies] = useState([]);
     const [selectedPolicy, setSelectedPolicy] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -27,23 +29,29 @@ function Mypolicy({ userId }) {
   
     const handleApply = async () => {
       try {
-        // Fake payment simulation
-        alert("Payment successful (simulation)");
-  
-        await axios.post('http://localhost:5000/api/user/policies/apply', {
+        const premiumPaid = selectedPolicy?.premiumAmount ?? 1000;
+        const remainingAmount = 0; // if full payment
+        const nextPaymentDate = new Date();
+        nextPaymentDate.setFullYear(nextPaymentDate.getFullYear() + 1);
+    
+        await axios.post("http://localhost:5000/api/user/policies/apply", {
           policyId: selectedPolicy._id,
-          userId
+          email,
+          premiumPaid,
+          remainingAmount,
+          nextPaymentDate,
         });
-  
-        setToastMsg('Policy application successful!');
+    
+        setToastMsg("Policy application successful!");
         setShowToast(true);
         setShowModal(false);
       } catch (err) {
-        console.error('Application failed', err);
-        setToastMsg('Failed to apply for policy.');
+        console.error("Application failed", err);
+        setToastMsg("Failed to apply for policy.");
         setShowToast(true);
       }
     };
+    
   
     return (
       <div style={{ display: "flex" }}>
@@ -97,7 +105,54 @@ function Mypolicy({ userId }) {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button variant="success" onClick={handleApply}>Pay & Apply</Button>
+            {/* <Button variant="success" onClick={handleApply}>Pay & Apply</Button> */}
+            <GooglePayButton
+            environment="TEST"
+            paymentRequest={{
+              apiVersion: 2,
+              apiVersionMinor: 0,
+              allowedPaymentMethods: [
+                {
+                  type: "CARD",
+                  parameters: {
+                    allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                    allowedCardNetworks: ["MASTERCARD", "VISA"],
+                  },
+                  tokenizationSpecification: {
+                    type: "PAYMENT_GATEWAY",
+                    parameters: {
+                      gateway: "example",
+                      gatewayMerchantId: "exampleGatewayMerchantId",
+                    },
+                  },
+                },
+              ],
+              merchantInfo: {
+                merchantId: "12345678901234567890",
+                merchantName: "Demo Merchant",
+              },
+              transactionInfo: {
+                totalPriceStatus: "FINAL",
+                totalPriceLabel: "Total",
+                totalPrice: (selectedPolicy?.premiumAmount ?? "1000").toString(),
+                currencyCode: "INR",
+                countryCode: "IN",
+              },
+              shippingAddressRequired: false,
+              callbackIntents: ["PAYMENT_AUTHORIZATION"],
+            }}
+            onLoadPaymentData={(paymentRequest) => {
+              console.log("Loaded payment data", paymentRequest);
+            }}
+            onPaymentAuthorized={async (paymentData) => {
+              console.log("Payment authorized", paymentData);
+              await handleApply(); // Call your function here
+              return { transactionState: "SUCCESS" };
+            }}
+            existingPaymentMethodRequired={false}
+            buttonColor="black"
+            buttonType="buy"
+          />
           </Modal.Footer>
         </Modal>
   

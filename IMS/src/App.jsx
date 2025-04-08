@@ -12,7 +12,7 @@ import Mypolicy from "./pages/Personal/Mypolicy";
 import Payments from "./pages/Personal/Payments";
 import Claimhistory from "./pages/Personal/Claimhistory";
 import Support from "./pages/Personal/Support";
-
+import Buynow from "./pages/Personal/paymentpage";
 
 
 import ManagePolicy from "./pages/Admin/MangePolicy";
@@ -50,6 +50,8 @@ function App() {
           <Route path="/claimhistory" element={<Claimhistory/>} />
           <Route path="/support" element={<Support/>} />
           <Route path="/myprofile" element={<Myprofile/>} />
+          <Route path="/paymentpage" element={<Buynow />} />
+
           {/*A*/}
           <Route path="/manage-user" element={<ManageUser/>} />
           <Route path="/manage-policy" element={<ManagePolicy/>} />

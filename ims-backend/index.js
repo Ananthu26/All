@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
+//New collection to store user premium data 
+
+const policyRegistrationSchema = new mongoose.Schema({
+  email: { type: String, required: true },
+  policyId: { type: mongoose.Schema.Types.ObjectId, ref: "Policy", required: true },
+  premiumPaid: { type: Number, required: true },
+  remainingAmount: { type: Number, required: true },
+  nextPaymentDate: { type: Date, required: true },
+  registeredAt: { type: Date, default: Date.now }
+});
+const PolicyRegistration = mongoose.model("PolicyRegistration", policyRegistrationSchema);
+
 // Define Admin Log Schema
 const adminLogSchema = new mongoose.Schema({
   admin: { type: String, required: true },
@@ -275,6 +287,25 @@ app.post("/api/users/getByEmail", async (req, res) => {
   } catch (error) {
     console.error("Error fetching user by email:", error);
     res.status(500).json({ message: "Server error" });
+  }
+});
+app.post('/api/user/policies/apply', async (req, res) => {
+  const { policyId, email, premiumPaid, remainingAmount, nextPaymentDate } = req.body;
+
+  try {
+    const registration = new PolicyRegistration({
+      policyId,
+      email,
+      premiumPaid,
+      remainingAmount,
+      nextPaymentDate,
+    });
+
+    await registration.save();
+    res.status(201).json({ message: 'Policy applied successfully', registration });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Something went wrong' });
   }
 });
 
