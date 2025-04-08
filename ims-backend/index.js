@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+
+  address: { type: String, required: true },
+  phone: { type: String, required: true },
+  dob: { type: Date, required: true },
+  occupation: { type: String, required: true },
+
   userType: { type: String, enum: ['a', 'p'], required: true },
   joinedDate: { type: Date, default: Date.now },
   status: { type: String, default: 'Active' }
@@ -53,7 +59,7 @@ const Policy = mongoose.model('Policy', policySchema);
 // Register Route
 app.post('/api/signup', async (req, res) => {
   try {
-    const { email, password, userType, fullName } = req.body;
+    const { email, password, userType, fullName ,occupation,dob,phone,address } = req.body;
 
     if (!email || !password || !userType || !fullName) {
       return res.status(400).json({ message: 'All fields are required' });
@@ -69,6 +75,10 @@ app.post('/api/signup', async (req, res) => {
       email,
       password,
       userType,
+      occupation,
+      dob,
+      phone,
+      address
     });
 
     await newUser.save();
@@ -95,7 +105,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    res.json({ message: 'Login success' });
+    res.json({ message: 'Login success' , email});
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -253,6 +263,21 @@ app.delete('/api/policies/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+//fetch user profile data from users collection
+// backend
+app.post("/api/users/getByEmail", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email }).select("-password -__v");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user by email:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 // Start Server
 const PORT = process.env.PORT || 5000;

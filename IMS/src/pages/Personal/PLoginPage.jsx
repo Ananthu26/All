@@ -42,7 +42,7 @@ const PLoginPage = () => {
         userType: "p",
       });
   
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", response.data.email);
       navigate("/personal-dashboard");
     } catch (error) {
       console.error("Login error: You are in the wrong login ", error);

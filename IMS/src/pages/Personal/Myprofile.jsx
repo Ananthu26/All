@@ -11,8 +11,13 @@ function MyProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userId = localStorage.getItem("userId");
-        const res = await axios.get(`http://localhost:5000/api/users/${userId}`);
+        // const userId = localStorage.getItem("userId");
+      
+        // frontend
+      const res = await axios.post("http://localhost:5000/api/users/getByEmail", {
+        email: localStorage.getItem("email"),
+      });
+
         setUser(res.data);
       } catch (err) {
         setToast({ show: true, message: "Failed to fetch user data", variant: "danger" });

@@ -10,6 +10,12 @@ const PSignupPage = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dob, setDob] = useState("");
+  const [occupation, setOccupation] = useState("");
+
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState("");
@@ -41,6 +47,10 @@ const PSignupPage = () => {
         email,
         password,
         userType: "p",
+        occupation,
+        dob,
+        phone,
+        address
       });
 
       setSuccess(true);
@@ -147,6 +157,73 @@ const PSignupPage = () => {
                 style={{ padding: "12px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd", fontSize: "16px" }} />
               <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required
                 style={{ padding: "12px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd", fontSize: "16px" }} />
+
+              {/* adding new shits
+               */}
+                
+
+              <input
+                type="text"
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+                style={{
+                  padding: "12px",
+                  marginBottom: "15px",
+                  borderRadius: "5px",
+                  border: "1px solid #ddd",
+                  fontSize: "16px",
+                }}
+              />
+
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                style={{
+                  padding: "12px",
+                  marginBottom: "15px",
+                  borderRadius: "5px",
+                  border: "1px solid #ddd",
+                  fontSize: "16px",
+                }}
+              />
+
+              <input
+                type="date"
+                placeholder="Date of Birth"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                required
+                style={{
+                  padding: "12px",
+                  marginBottom: "15px",
+                  borderRadius: "5px",
+                  border: "1px solid #ddd",
+                  fontSize: "16px",
+                }}
+              />
+
+              <input
+                type="text"
+                placeholder="Occupation"
+                value={occupation}
+                onChange={(e) => setOccupation(e.target.value)}
+                required
+                style={{
+                  padding: "12px",
+                  marginBottom: "15px",
+                  borderRadius: "5px",
+                  border: "1px solid #ddd",
+                  fontSize: "16px",
+                }}
+              />
+
+
+              {/* eof */}
               <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required
                 style={{ padding: "12px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd", fontSize: "16px" }} />
               <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required
